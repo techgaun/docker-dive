@@ -1,6 +1,8 @@
 # docker-dive
-Something about docker, does not everything but something everyone should probably read
 
+> Something about docker, does not everything but something everyone should probably read
+
+_Warning: This is a work in progress_
 ## Table of Contents
 
 - [Containers 101](#containers-101)
