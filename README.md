@@ -8,6 +8,9 @@ _Warning: This is a work in progress_
 - [Containers 101](#containers-101)
 - [Docker Architecture](#docker-architecture)
   - [How Container Runs](#how-container-runs)
+  - [Experimental Features](#experimental-features)
+  - [Resource Limitation](#resource-limitation)
+  - [Using GPUs](#using-gpus)
 
 ## Containers 101
 
@@ -112,6 +115,22 @@ docker info to see details on what's supported & what's not
 ```
 
 ## Using GPUs
+
+- supports nvidia currenty
+- you need to install nvidia drivers & also nvidia-container-runtime
+- check if you have nvidia: `lspci | grep -i nvidia
+- `docker run -it --rm --gpus all ubuntu nvidia-smi`
+- `docker run -it --rm --gpus device=GPU-3a23c669-1f69-c64e-cf85-44e9b07e7a2a ubuntu nvidia-smi`
+- `docker run -it --rm --gpus device=0,2 ubuntu nvidia-smi`
+- `docker run --gpus 'all,capabilities=utility' --rm ubuntu nvidia-smi`
+- https://github.com/NVIDIA/nvidia-docker/wiki/CUDA
+
+### GPU Run
+
+```shell
+docker run --gpus all -it --rm tensorflow/tensorflow:latest-gpu \
+   python -c "import tensorflow as tf; print(tf.reduce_sum(tf.random.normal([1000, 1000])))"
+```
 
 ## Docker Data Management
 
