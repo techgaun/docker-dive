@@ -117,13 +117,13 @@ docker info to see details on what's supported & what's not
 ## Using GPUs
 
 - supports nvidia currenty
-- you need to install nvidia drivers & also nvidia-container-runtime
-- check if you have nvidia: `lspci | grep -i nvidia
+- you need to install nvidia drivers & also [nvidia-container-runtime][nvidia-runc-gh]
+- check if you have nvidia: `lspci | grep -i nvidia`
 - `docker run -it --rm --gpus all ubuntu nvidia-smi`
 - `docker run -it --rm --gpus device=GPU-3a23c669-1f69-c64e-cf85-44e9b07e7a2a ubuntu nvidia-smi`
 - `docker run -it --rm --gpus device=0,2 ubuntu nvidia-smi`
 - `docker run --gpus 'all,capabilities=utility' --rm ubuntu nvidia-smi`
-- https://github.com/NVIDIA/nvidia-docker/wiki/CUDA
+- [CUDA images][cuda-gh-wiki] are available to download from nvidia's [hub repo][nvidia-hub]
 
 ### GPU Run
 
@@ -154,3 +154,6 @@ docker run --gpus all -it --rm tensorflow/tensorflow:latest-gpu \
 [runc-gh]: https://github.com/opencontainers/runc
 [docker-https]: https://docs.docker.com/engine/security/https/
 [docker-cli-gh-experimental]: https://github.com/docker/cli/blob/master/experimental/README.md
+[nvidia-runc-gh]: https://github.com/NVIDIA/nvidia-container-runtime
+[cuda-gh-wiki]: https://github.com/NVIDIA/nvidia-docker/wiki/CUDA
+[nvidia-hub]: https://hub.docker.com/r/nvidia/cuda
