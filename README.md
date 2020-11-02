@@ -77,9 +77,9 @@ futex(0xc0000cc148, FUTEX_WAKE_PRIVATE, 1) = 1
 
 ## Docker Data Management
 
-### Port Mappings
-
 ## Docker Network
+
+### Port Mappings
 
 ## Security
 
