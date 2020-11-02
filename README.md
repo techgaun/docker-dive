@@ -71,6 +71,27 @@ futex(0xc0000cc148, FUTEX_WAKE_PRIVATE, 1) = 1
 
 ## Experimental Features
 
+Docker ships with various experimental features and before they make it as stable features (or happen to be kicked out), you can use those features.
+
+To enable experimental features on docker daemon, you can edit the `daemon.json` (you can create one if it doesn't exist) which typically sits in `/etc/docker/daemon.json` on Linux hosts.
+
+```json
+{
+  "features": { "buildkit": true },
+  "experimental": true
+}
+```
+
+To enable experimental features on Docker CLI client, you can edit the `$HOME/.docker/config.json` on Linux hosts:
+
+```json
+{
+  "experimental": "enabled"
+}
+```
+
+Docker cli project maintains the experimental feature lists [HERE][docker-cli-gh-experimental] but I have not found the same for Docker daemon. However, most dockerd documentations should mention whenever a feature is experimental.
+
 ## Resource Limitation
 
 ## Using GPUs
@@ -96,3 +117,4 @@ futex(0xc0000cc148, FUTEX_WAKE_PRIVATE, 1) = 1
 [oci-home]: https://opencontainers.org/
 [runc-gh]: https://github.com/opencontainers/runc
 [docker-https]: https://docs.docker.com/engine/security/https/
+[docker-cli-gh-experimental]: https://github.com/docker/cli/blob/master/experimental/README.md
