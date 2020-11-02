@@ -94,6 +94,23 @@ Docker cli project maintains the experimental feature lists [HERE][docker-cli-gh
 
 ## Resource Limitation
 
+By default, a container has no resource constraints and can use as much of a given resource as the host’s kernel scheduler allows. Docker provides ways to control how much memory, or CPU a container can use, setting runtime configuration flags of the docker run command. This section provides details on when you should set such limits and the possible implications of setting them.
+
+Few examples follow:
+
+```shell
+docker container run -d --name test-nginx --cpu-shares 512 --memory 128M -p 8080:80 nginx
+docker container update --cpu-shares 512 --memory 128M --memory-swap 256M test-nginx
+docker -d --storage-opt dm.basesize=5G --cpuset=0,1 -c 2 -m 128m
+--cpus="1.5" === --cpu-period="100000" --cpu-quota="150000"
+--cpuset-cpus 0-3 or 1,3
+
+docker info to see details on what's supported & what's not
+
+--oom-kill-disable
+--oom-score-adj (-1000 to 1000; lower means less chance to be killed on oom)
+```
+
 ## Using GPUs
 
 ## Docker Data Management
