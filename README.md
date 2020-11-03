@@ -2,15 +2,20 @@
 
 > Something about docker, does not everything but something everyone should probably read
 
-_Warning: This is a work in progress_
+_Warning: This is a work in progress thus some sections may not be fully accurate until thhis wip warning is removed_
 ## Table of Contents
 
 - [Containers 101](#containers-101)
 - [Docker Architecture](#docker-architecture)
   - [How Container Runs](#how-container-runs)
-  - [Experimental Features](#experimental-features)
-  - [Resource Limitation](#resource-limitation)
-  - [Using GPUs](#using-gpus)
+- [Experimental Features](#experimental-features)
+- [Resource Limitation](#resource-limitation)
+- [Using GPUs](#using-gpus)
+  - [GPU Run](#gpu-run)
+- [Docker Data Management](docker-data-management)
+  - [Storage Drivers](#storage-drivers)
+  - [Data Volumes](#data-volumes)
+  - [Bind Mounts](#bind-mounts)
 
 ## Containers 101
 
@@ -133,6 +138,64 @@ docker run --gpus all -it --rm tensorflow/tensorflow:latest-gpu \
 ```
 
 ## Docker Data Management
+
+- volumes - non-docker process should not modify; best way to persist data in docker
+- bind mounts - from anywhere in host system
+- tmpfs
+
+### Storage Drivers
+
+- overlay2 and overlay based on unionfs
+- brtfs
+- devicemapper
+
+### Data Volumes
+
+Volumes are the preferred mechanism for storing data accessed (read/write) by a container. Volumes are managed by docker, and can be shared with multiple containers.
+
+```
+# create a volume named nginx-vol
+$ docker volume create nginx-vol
+
+# map the volume via --mount arg on docker run
+$ docker run -d \
+  --name=nginxtest \
+  --mount source=nginx-vol,destination=/usr/share/nginx/html \
+  nginx:latest
+
+# or map the volume via -v arg on docker run
+$ docker run -d \
+  --name=nginxtest \
+  -v nginx-vol:/usr/share/nginx/html \
+  nginx:latest
+
+# delete the volume
+$ docker volume rm nginx-vol
+```
+
+Note that lifecycles of volume and the container are independent thus docker does not automatically delete the volume when a container is deleted and vice versa. You can use `docker rm -v` if you want to delete the volume when you are deleting the container.
+
+
+### Bind Mounts
+
+You can use bind mounts to mount host directory and while this is really useful for development and testing, it should ideally only be limited for the dev/test purposes. In general, use data volumes to store data accessed by a container. The volumes are managed by docker itself and you can share the volumes across multiple containers in different mix of access modes.
+
+```
+# bind the local path using --mount arg
+$ docker run -d -P \
+	--name web \
+	--mount type=bind,source=/projects/app,target=/opt/app \
+	your/image \
+  some-daemon-process
+
+# or bind the local path using -v arg
+$ docker run -d -P \
+	--name web \
+	-v /projects/app:/opt/app \
+	--mount type=bind,source=/projects/app,target=/opt/app \
+	your/image \
+  some-daemon-process
+```
 
 ## Docker Network
 
