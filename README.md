@@ -20,7 +20,7 @@ _Warning: This is a work in progress thus some sections may not be fully accurat
   - [Port Mappings](#port-mappings)
 - [Security](#security)
 - [Deployment Tips](#deployment-tips)
-- [Docker Testing/Linting](#docker-testing-linting)
+- [Docker Testing/Linting](#docker-testinglinting)
 - [Serverless functions with Containers](#serverless-functions-with-containers)
 - [Buildkit](#buildkit)
 
