@@ -234,6 +234,12 @@ $ docker run -d -p 127.0.0.1:3000:3000/udp my-image
 
 ## Deployment Tips
 
+- Never use latest tag as it is harder to track which version of the image is running and more difficult to roll back properly. [Kubernetes][k8-label-tag] recommends the same thing.
+- For consistent and exactly reproducible builds, always use specific fully-specified base images. For example, prefer `node:15.2.1-alpine3.10` instead of `node:15-alpine3.10`, `node:current-alpine3.10` and `node:alpine3.10`. Although these tags may point at the `15.2.1-alpine3.10` tag at particular point of time, that will change over time as things change with nodejs releases.
+- Make sure you are only providing just enough permissions for your app to run in your container. For example, run the app as non-root user if you don't need root to run the app.
+- Make sure you have appropriate signal handlers (SIGTERM, SIGINT & then SIGKILL) in your app. This is useful for cleaning up but still handling in-flight user requests, for example. Also, take a look at project like [tini][tini-gh] for having proper `init` system for your containers. If you are using Docker 1.13 or greater including the Docker CE, Tini is included in Docker itself and you can enable tini by passing `--init` flag to `docker run` command.
+- We already talked about this on security section above but its critical to have vulnerability scans on your docker images and also on your containers.
+
 ## Docker Testing/Linting
 
 ## Serverless functions with Containers
@@ -249,3 +255,5 @@ $ docker run -d -p 127.0.0.1:3000:3000/udp my-image
 [nvidia-runc-gh]: https://github.com/NVIDIA/nvidia-container-runtime
 [cuda-gh-wiki]: https://github.com/NVIDIA/nvidia-docker/wiki/CUDA
 [nvidia-hub]: https://hub.docker.com/r/nvidia/cuda
+[k8-label-tag]: https://kubernetes.io/docs/concepts/configuration/overview/#using-labels
+[tini-gh]: https://github.com/krallin/tini
