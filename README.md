@@ -12,10 +12,12 @@ _Warning: This is a work in progress thus some sections may not be fully accurat
 - [Resource Limitation](#resource-limitation)
 - [Using GPUs](#using-gpus)
   - [GPU Run](#gpu-run)
-- [Docker Data Management](docker-data-management)
+- [Docker Data Management](#docker-data-management)
   - [Storage Drivers](#storage-drivers)
   - [Data Volumes](#data-volumes)
   - [Bind Mounts](#bind-mounts)
+- [Docker Network](#docker-network)
+  - [Port Mappings](#port-mappings)
 
 ## Containers 101
 
@@ -199,7 +201,29 @@ $ docker run -d -P \
 
 ## Docker Network
 
+Like rest of the other namespaces, docker makes use of network namespace
+to achieve isolation of the networking resources in a system.
+This allows docker containers to have separate interfaces,
+routes and IPs making it totally flexible to manage networks in a docker container.
+
+Like many of the other subsystems, Docker's networking subsystem
+is very pluggable with network drivers. The default drivers that exist by default are:
+
+- bridge
+- host (linux-only)
+- overlay
+- macvlan
+- none
+
 ### Port Mappings
+
+```shell
+$ docker run -d -p 127.0.0.1:3000:3000 my-image
+
+$ docker run -d -p 127.0.0.1::3000 my-image
+
+$ docker run -d -p 127.0.0.1:3000:3000/udp my-image
+```
 
 ## Security
 
