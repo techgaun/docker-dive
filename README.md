@@ -246,6 +246,72 @@ $ docker run -d -p 127.0.0.1:3000:3000/udp my-image
 
 ## Buildkit
 
+### Why buildkit
+
+- concurrent
+- cache-efficient
+- dockerfile-agnostic
+- `DOCKER_BUILDKIT=1 docker build` or `docker buildx`
+- Automatic garbage collection
+- Efficient instruction caching
+- Multiple output formats
+- Distributable workers
+
+### How to enable
+- `{ "features": { "buildkit": true } }` in `/etc/docker/daemon.json`
+- The new syntax features in Dockerfile are available if you override the default frontend. To override the default frontend, set the first line of the Dockerfile as a comment with a specific frontend image: `# syntax = <frontend image>, e.g. # syntax = docker/dockerfile:1.0-experimental`
+
+### Sample dockerfile with secrets:
+- A secret file is automatically mounted only to a separate tmpfs filesystem to make sure that it does not leak to the final image nor to the next command and that it does not remain in the local build cache.
+
+```docker
+# syntax = docker/dockerfile:1.0-experimental
+FROM alpine
+
+# shows secret from default secret location:
+RUN --mount=type=secret,id=mysecret cat /run/secrets/mysecret
+
+# shows secret from custom secret location:
+RUN --mount=type=secret,id=mysecret,dst=/foobar cat /foobar
+
+# docker build --no-cache --progress=plain --secret id=mysecret,src=mysecret.txt .
+```
+
+### Sample dockerfile with ssh
+
+- Probably the most popular use case for accessing private data in builds is for getting access to private repositories through SSH
+- use the `--ssh` flag to forward your existing SSH agent connection or a key to the builder. Instead of transferring the key data, docker will just notify the builder that such capability is available. Now when the builder needs access to a remote server through SSH, it will dial back to the client and ask it to sign the specific request needed for this connection. The key itself never leaves the client, and as soon as the command that requested the access has completed there is no information on the builder side to reestablish that remote connection later.
+- The docker build has a --ssh option to allow the Docker Engine to forward SSH agent connections
+- Only the commands in the Dockerfile that have explicitly requested the SSH access by defining type=ssh mount have access to SSH agent connections. The other commands have no knowledge of any SSH agent being available.
+- To request SSH access for a RUN command in the Dockerfile, define a mount with type ssh. This will set up the `SSH_AUTH_SOCK` environment variable to make programs relying on SSH automatically use that socket.
+
+```docker
+# syntax=docker/dockerfile:experimental
+FROM alpine
+
+# Install ssh client and git
+RUN apk add --no-cache openssh-client git
+
+# Download public key for github.com
+RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+# Clone private repository
+RUN --mount=type=ssh git clone git@github.com:myorg/myproject.git myproject
+
+# docker build --ssh default .
+```
+
+```
+RUN --mount=type=ssh,id=projecta git clone projecta
+RUN --mount=type=ssh,id=projectb git clone projectb
+
+docker build --ssh projecta=./projecta.pem --ssh projectb=./projectb.pem
+
+# Note that even when actual keys are specified here, still only the agent connection is shared with the builder and not the actual content of these private keys
+```
+
+### Multi-platform images
+
 <!-- links section -->
 [aquasec-container-history]: https://blog.aquasec.com/a-brief-history-of-containers-from-1970s-chroot-to-docker-2016
 [oci-home]: https://opencontainers.org/
